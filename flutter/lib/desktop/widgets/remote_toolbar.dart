@@ -842,6 +842,7 @@ class _RemoteToolbarState extends State<RemoteToolbar> {
       state: widget.state,
       setFullscreen: _setFullscreen,
     ));
+    toolbarItems.add(_MissionControlMenu(ffi: widget.ffi));
     // Do not show keyboard for camera connection type.
     if (widget.ffi.connType == ConnType.defaultConn) {
       toolbarItems.add(_KeyboardMenu(id: widget.id, ffi: widget.ffi));
@@ -972,6 +973,28 @@ class _MobileActionMenu extends StatelessWidget {
               ? _ToolbarTheme.hoverBlueColor
               : _ToolbarTheme.hoverInactiveColor,
         ));
+  }
+}
+
+class _MissionControlMenu extends StatelessWidget {
+  final FFI ffi;
+  const _MissionControlMenu({Key? key, required this.ffi}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final ffiModel = Provider.of<FfiModel>(context);
+    if (ffi.connType != ConnType.defaultConn ||
+        ffiModel.pi.platform != kPeerPlatformMacOS ||
+        !ffiModel.keyboard) {
+      return Offstage();
+    }
+    return _IconMenuButton(
+      assetName: 'assets/mission_control.svg',
+      tooltip: 'Mission Control',
+      onPressed: ffi.inputModel.sendMissionControl,
+      color: _ToolbarTheme.blueColor,
+      hoverColor: _ToolbarTheme.hoverBlueColor,
+    );
   }
 }
 

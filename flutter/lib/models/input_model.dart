@@ -1353,6 +1353,25 @@ class InputModel {
         command: command);
   }
 
+  /// Sends the macOS Mission Control shortcut (Control + Up Arrow) to the peer.
+  void sendMissionControl() {
+    if (!keyboardPerm) return;
+    if (isViewCamera) return;
+    // The wire-side swap turns Control into Command, so invert it here to make
+    // sure the peer receives Control + Up Arrow.
+    final swapCtrlCmd = bind.sessionGetToggleOptionSync(
+        sessionId: sessionId, arg: 'allow_swap_key');
+    bind.sessionInputKey(
+        sessionId: sessionId,
+        name: 'VK_UP',
+        down: false,
+        press: true,
+        alt: false,
+        ctrl: !swapCtrlCmd,
+        shift: false,
+        command: swapCtrlCmd);
+  }
+
   static Map<String, dynamic> getMouseEventMove() => {
         'type': _kMouseEventMove,
         'buttons': 0,
